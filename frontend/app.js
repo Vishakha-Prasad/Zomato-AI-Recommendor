@@ -1,0 +1,235 @@
+/**
+ * Zomato Recommender - Main Application Logic
+ */
+
+const API_BASE = ""; // Backend and frontend are on same origin
+
+const state = {
+    token: sessionStorage.getItem('zomato_token'),
+    locations: [],
+    cuisines: [],
+    priceTier: "",
+    rating: 0
+};
+
+// ── DOM Elements ─────────────────────────────────────────────────────────────
+
+const screens = {
+    loader: document.getElementById('loader'),
+    login: document.getElementById('login-screen'),
+    reco: document.getElementById('reco-screen')
+};
+
+const loginForm = document.getElementById('login-form');
+const loginError = document.getElementById('login-error');
+const logoutBtn = document.getElementById('logout-btn');
+const getRecosBtn = document.getElementById('get-recos-btn');
+
+const filterLoc = document.getElementById('filter-location');
+const filterCuisine = document.getElementById('filter-cuisine');
+const filterRating = document.getElementById('filter-rating');
+const ratingVal = document.getElementById('rating-val');
+const priceChips = document.querySelectorAll('.chip');
+
+const resultsGrid = document.getElementById('results-grid');
+const resultsBanners = document.getElementById('results-imagery');
+const resultsPlaceholder = document.getElementById('results-placeholder');
+const resultsLoading = document.getElementById('results-loading');
+const resultsCount = document.getElementById('results-count');
+
+// ── Navigation & Initialization ──────────────────────────────────────────────
+
+function showScreen(screenId) {
+    Object.keys(screens).forEach(key => {
+        screens[key].classList.add('hidden');
+    });
+    screens[screenId].classList.remove('hidden');
+}
+
+async function init() {
+    if (state.token) {
+        try {
+            await verifyAuth();
+            showScreen('reco');
+            await loadCatalogData();
+            renderBanners();
+        } catch (err) {
+            logout();
+        }
+    } else {
+        showScreen('login');
+    }
+}
+
+async function verifyAuth() {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+        headers: { 'Authorization': `Bearer ${state.token}` }
+    });
+    if (!res.ok) throw new Error('Unauthorized');
+}
+
+// ── Auth Handlers ────────────────────────────────────────────────────────────
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.textContent = "";
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            state.token = data.access_token;
+            sessionStorage.setItem('zomato_token', state.token);
+            init();
+        } else {
+            loginError.textContent = data.detail || "Login failed";
+        }
+    } catch (err) {
+        loginError.textContent = "Network error connection failed";
+    }
+});
+
+function logout() {
+    state.token = null;
+    sessionStorage.removeItem('zomato_token');
+    showScreen('login');
+}
+
+logoutBtn.addEventListener('click', logout);
+
+// ── Filter Handlers ──────────────────────────────────────────────────────────
+
+async function loadCatalogData() {
+    try {
+        const [locsRes, cuisinesRes] = await Promise.all([
+            fetch(`${API_BASE}/restaurants/locations`, { headers: { 'Authorization': `Bearer ${state.token}` } }),
+            fetch(`${API_BASE}/restaurants/cuisines`, { headers: { 'Authorization': `Bearer ${state.token}` } })
+        ]);
+
+        state.locations = await locsRes.json();
+        state.cuisines = await cuisinesRes.json();
+
+        populateDropdown(filterLoc, state.locations, "Any Location");
+        populateDropdown(filterCuisine, state.cuisines, "Any Cuisine");
+    } catch (err) {
+        console.error("Failed to load catalog filters", err);
+    }
+}
+
+function populateDropdown(select, items, defaultText) {
+    select.innerHTML = `<option value="">${defaultText}</option>`;
+    items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        opt.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+        select.appendChild(opt);
+    });
+}
+
+filterRating.addEventListener('input', (e) => {
+    state.rating = parseFloat(e.target.value);
+    ratingVal.textContent = state.rating.toFixed(1);
+});
+
+priceChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        if (chip.classList.contains('active')) {
+            chip.classList.remove('active');
+            state.priceTier = "";
+        } else {
+            priceChips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            state.priceTier = chip.dataset.value;
+        }
+    });
+});
+
+// ── Recommendation Logic ─────────────────────────────────────────────────────
+
+async function getRecommendations() {
+    resultsPlaceholder.classList.add('hidden');
+    resultsLoading.classList.remove('hidden');
+    resultsGrid.innerHTML = "";
+    resultsCount.textContent = "";
+
+    const payload = {
+        location: filterLoc.value,
+        cuisine: filterCuisine.value,
+        price_tier: state.priceTier,
+        min_rating: state.rating
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/recommendations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${state.token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        resultsLoading.classList.add('hidden');
+
+        if (data.length === 0) {
+            resultsPlaceholder.classList.remove('hidden');
+            resultsPlaceholder.innerHTML = `<div class="placeholder-icon">🔍</div><p>No restaurants found matching your criteria</p>`;
+        } else {
+            renderResults(data);
+            resultsCount.textContent = `Showing top ${data.length} recommendations`;
+        }
+    } catch (err) {
+        resultsLoading.classList.add('hidden');
+        resultsPlaceholder.classList.remove('hidden');
+        resultsPlaceholder.textContent = "Error loading recommendations. Please try again.";
+    }
+}
+
+getRecosBtn.addEventListener('click', getRecommendations);
+
+function renderResults(restaurants) {
+    resultsGrid.innerHTML = restaurants.map(r => `
+        <div class="restaurant-card">
+            <h3 class="resto-name">${r.name}</h3>
+            <p class="resto-meta">${r.location.charAt(0).toUpperCase() + r.location.slice(1)}</p>
+            <div class="resto-tags">
+                <span class="resto-cuisine">${r.cuisine.charAt(0).toUpperCase() + r.cuisine.slice(1)}</span>
+                <span class="resto-rating">${r.rating.toFixed(1)} ★</span>
+            </div>
+            <div style="margin-top: 12px; font-size: 0.875rem; color: #FFAB40;">
+                ${r.price_tier}
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderBanners() {
+    const banners = [
+        { name: "Traditional", img: "/assets/indian.png" },
+        { name: "Fast Food", img: "/assets/burger.png" },
+        { name: "Nightlife", img: "/assets/cocktails.png" }
+    ];
+
+    resultsBanners.innerHTML = banners.map(b => `
+        <div class="banner" style="background-image: url('${b.img}')" onclick="quickFilterCuisine('${b.name}')">
+            <span>${b.name}</span>
+        </div>
+    `).join('');
+}
+
+window.quickFilterCuisine = (name) => {
+    filterCuisine.value = name.toLowerCase();
+    getRecommendations();
+};
+
+init();

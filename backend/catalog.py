@@ -1,0 +1,86 @@
+"""
+Restaurant catalog: loads data/zomato_cleaned.csv and provides filter helpers.
+"""
+
+from __future__ import annotations
+import os
+from pathlib import Path
+from typing import Optional
+
+import pandas as pd
+
+_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "zomato_cleaned.csv"
+
+_df: Optional[pd.DataFrame] = None
+
+
+def _load() -> pd.DataFrame:
+    global _df
+    if _df is None:
+        if not _DATA_PATH.exists():
+            raise FileNotFoundError(
+                f"Cleaned data not found at {_DATA_PATH}. "
+                "Run: python data_pipeline/explore_and_clean_data.py"
+            )
+        # Explicit UTF-8 for Windows compatibility with "₹"
+        _df = pd.read_csv(_DATA_PATH, encoding="utf-8")
+        # Normalise strings
+        for col in ("location", "cuisine", "price_tier", "name"):
+            _df[col] = _df[col].fillna("").astype(str).str.strip()
+        _df["rating"] = pd.to_numeric(_df["rating"], errors="coerce").fillna(0.0)
+    return _df
+
+
+def get_locations() -> list[str]:
+    df = _load()
+    # Locations in Zomato data are full addresses. 
+    # Let's extract the locality part (usually the word before 'bangalore' or near the end)
+    # A simple way for this dataset is to take the unique set of things after splitting by comma
+    # and looking for common identifiers. For better UX, let's keep it simple: 
+    # Many rows have "..., banashankari, bangalore".
+    all_locs = df["location"].str.lower().str.split(", ")
+    unique_areas = set()
+    for parts in all_locs:
+        # Usually the locality is one of the last few parts before 'bangalore'
+        for p in parts:
+            p = p.strip()
+            if p and p != "bangalore" and not p[0].isdigit():
+                unique_areas.add(p)
+    
+    return sorted(list(unique_areas))
+
+
+def get_cuisines() -> list[str]:
+    df = _load()
+    unique_c = set()
+    for val in df["cuisine"].str.lower().str.split(", "):
+        for c in val:
+            if c.strip():
+                unique_c.add(c.strip())
+    return sorted(list(unique_c))
+
+
+def filter_restaurants(
+    location: str,
+    cuisine: str,
+    price_tier: str,
+    min_rating: float,
+    limit: int = 50,
+) -> pd.DataFrame:
+    df = _load().copy()
+
+    if location and location.strip():
+        df = df[df["location"].str.contains(location.strip().lower(), case=False, na=False)]
+
+    if cuisine and cuisine.strip():
+        df = df[df["cuisine"].str.contains(cuisine.strip().lower(), case=False, na=False)]
+
+    if price_tier and price_tier.strip():
+        df = df[df["price_tier"] == price_tier.strip()]
+
+    if min_rating and min_rating > 0:
+        df = df[df["rating"] >= min_rating]
+
+    # Default sort: rating desc, name asc
+    df = df.sort_values(["rating", "name"], ascending=[False, True])
+    return df.head(limit)

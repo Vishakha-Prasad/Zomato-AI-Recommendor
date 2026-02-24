@@ -1,0 +1,370 @@
+:root {
+    --primary: #FF5252;
+    --primary-dark: #D32F2F;
+    --accent: #FFAB40;
+    --bg-dark: #0F111A;
+    --bg-card: rgba(255, 255, 255, 0.08);
+    --bg-glass: rgba(15, 17, 26, 0.7);
+    --text-white: #FFFFFF;
+    --text-muted: #A0A0A0;
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    --radius-lg: 24px;
+    --radius-md: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+h1, h2, h3, .logo {
+    font-family: 'Outfit', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.screen {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    transition: var(--transition);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ── Typography & Buttons ───────────────────────────────────────────────────── */
+
+.logo {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.4);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    color: var(--text-white);
+}
+
+.btn-outline:hover {
+    background: var(--border-glass);
+}
+
+.btn-sm { padding: 8px 16px; font-size: 0.875rem; }
+.btn-lg { padding: 16px 32px; font-size: 1.125rem; width: 100%; }
+
+/* ── Login Screen ───────────────────────────────────────────────────────────── */
+
+#login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('/assets/spices.png') no-repeat center center;
+    background-size: cover;
+}
+
+.bg-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(15, 17, 26, 0.4), rgba(15, 17, 26, 0.9));
+}
+
+.login-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+.login-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    padding: 48px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-premium);
+    text-align: center;
+}
+
+.tagline {
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-hint {
+    margin-top: 24px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.error-message {
+    margin-top: 16px;
+    color: var(--primary);
+    font-size: 0.875rem;
+}
+
+/* ── Recommendation Screen ───────────────────────────────────────────────────── */
+
+#reco-screen {
+    background-color: var(--bg-dark);
+}
+
+.app-header {
+    height: 80px;
+    border-bottom: 1px solid var(--border-glass);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 17, 26, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.app-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.app-header .logo { font-size: 1.5rem; }
+
+.filter-section {
+    margin-top: 40px;
+    background: var(--bg-card);
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-glass);
+}
+
+.filter-section h2 { margin-bottom: 24px; font-weight: 600; }
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(15, 17, 26, 0.5);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+}
+
+.price-chips {
+    display: flex;
+    gap: 8px;
+}
+
+.chip {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-glass);
+    background: transparent;
+    color: var(--text-white);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--primary);
+}
+
+/* ── Results Area ───────────────────────────────────────────────────────────── */
+
+.category-banners {
+    margin: 40px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    height: 200px;
+}
+
+.banner {
+    border-radius: var(--radius-md);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.banner:hover { transform: scale(1.02); }
+
+.banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+.banner span {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    z-index: 1;
+    font-weight: 600;
+}
+
+.results-meta {
+    margin-bottom: 24px;
+    color: var(--text-muted);
+}
+
+.restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.restaurant-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: var(--transition);
+}
+
+.restaurant-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+}
+
+.resto-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
+.resto-meta { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 16px; }
+.resto-tags { display: flex; justify-content: space-between; align-items: center; }
+.resto-cuisine { background: rgba(255, 82, 82, 0.1); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.resto-rating { color: var(--accent); font-weight: 700; display: flex; align-items: center; gap: 4px; }
+
+.placeholder-state {
+    text-align: center;
+    padding: 80px 0;
+    color: var(--text-muted);
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+/* ── Loader ─────────────────────────────────────────────────────────────────── */
+
+.spinner {
+    width: 50px; height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Skeletons ──────────────────────────────────────────────────────────────── */
+.skeleton-card {
+    height: 180px;
+    background: linear-gradient(90deg, #1A1D29 25%, #2A2E3D 50%, #1A1D29 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@media (max-width: 768px) {
+    .category-banners { grid-template-columns: 1fr; height: auto; }
+    .banner { height: 120px; }
+    .login-card { padding: 32px 24px; }
+}
