@@ -66,9 +66,12 @@
             <header class="app-header">
                 <div class="container header-content">
                     <h1 class="logo">Zomato AI<span> Recommendor</span></h1>
-                    <div id="voice-trigger" class="voice-btn" title="Speak your command">
-                        <i class="fas fa-microphone"></i>
-                        <span class="btn-glow"></span>
+                    <div class="voice-controls">
+                        <div id="voice-trigger" class="voice-btn" title="Speak your command">
+                            <i class="fas fa-microphone"></i>
+                            <span class="btn-glow"></span>
+                        </div>
+                        <div id="live-transcript" class="live-transcript"></div>
                     </div>
                     <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
                 </div>
@@ -83,6 +86,15 @@
             </div>
 
             <main class="container">
+                <div class="voice-hero-card">
+                    <div class="voice-hero-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <div class="voice-hero-content">
+                        <h3>Discover with Voice</h3>
+                        <p>Try saying "Find me some spicy Chinese in Koramangala" or "Romantic dinner spots nearby"</p>
+                    </div>
+                </div>
                 <section class="filter-section">
                     <h2>Your Preferences</h2>
                     <div class="filter-grid">
@@ -93,7 +105,7 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>What's your craving? (Max 4)</label>
+                            <label>What's your craving?</label>
                             <div id="selected-cuisines" class="cuisine-selection">
                                 <!-- Tags will be added here -->
                             </div>
@@ -133,6 +145,7 @@
         </div>
     </div>
 
+    <div id="toast-container" class="toast-container"></div>
     <script src="/static/app.js"></script>
 </body>
 

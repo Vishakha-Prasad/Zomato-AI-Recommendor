@@ -34,6 +34,7 @@ class Restaurant(BaseModel):
     location: str
     cuisine: str
     cost_for_two: int
+    min_price_for_two: Optional[int] = None
     rating: float
     reviews: Optional[str] = ""
     review_summary: Optional[str] = ""

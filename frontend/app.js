@@ -24,6 +24,7 @@ const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
 const getRecosBtn = document.getElementById('get-recos-btn');
+const liveTranscript = document.getElementById('live-transcript');
 
 const filterLoc = document.getElementById('filter-location');
 const filterCuisine = document.getElementById('filter-cuisine');
@@ -36,6 +37,7 @@ const resultsBanners = document.getElementById('results-imagery');
 const resultsPlaceholder = document.getElementById('results-placeholder');
 const resultsLoading = document.getElementById('results-loading');
 const resultsCount = document.getElementById('results-count');
+const toastContainer = document.getElementById('toast-container');
 
 // ── Navigation & Initialization ──────────────────────────────────────────────
 
@@ -144,7 +146,7 @@ filterCuisine.addEventListener('change', (e) => {
     const val = e.target.value;
     if (val && !state.selectedCuisines.includes(val)) {
         if (state.selectedCuisines.length >= 4) {
-            alert("Maximum 4 cuisines allowed");
+            showToast("Maximum 4 cuisines allowed");
             e.target.value = "";
             return;
         }
@@ -167,6 +169,25 @@ window.removeCuisineTag = (cuisine) => {
     state.selectedCuisines = state.selectedCuisines.filter(c => c !== cuisine);
     renderCuisineTags();
 };
+
+function showToast(message) {
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+
+    toastContainer.appendChild(toast);
+
+    // Fade out after 3.6s, remove after 4s
+    setTimeout(() => {
+        toast.classList.add('fade-out');
+    }, 3600);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
 
 // ── Voice Transcription ──────────────────────────────────────────────────────
 
@@ -192,11 +213,17 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             .map(result => result.transcript)
             .join('');
         voiceText.textContent = transcript;
+        if (liveTranscript) {
+            liveTranscript.textContent = transcript;
+        }
     };
 
     recognition.onend = () => {
         setTimeout(() => {
             voiceOverlay.classList.add('hidden');
+            if (liveTranscript) {
+                liveTranscript.textContent = "";
+            }
             processVoiceCommand(voiceText.textContent);
         }, 1500);
     };
@@ -304,7 +331,7 @@ function renderResults(restaurants) {
                     <p>${r.review_summary}</p>
                 </div>` : ''}
                 <div style="margin-top: 12px; font-size: 0.875rem; color: #FFFFFF; opacity: 0.9; font-weight: 600;">
-                    Approx. Bill for Two: ₹${r.cost_for_two}
+                    Min. Price for Two: ₹${r.min_price_for_two || r.cost_for_two}
                 </div>
             </div>
         `;

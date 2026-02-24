@@ -292,6 +292,116 @@ h3,
     color: var(--text-muted);
 }
 
+/* ── Voice Hero Card ────────────────────────────────────────────────────────── */
+.voice-hero-card {
+    background: linear-gradient(135deg, rgba(255, 82, 82, 0.15), rgba(255, 171, 64, 0.15));
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    margin: 40px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.voice-hero-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 82, 82, 0.5);
+    flex-shrink: 0;
+    animation: pulse-slow 2s infinite;
+}
+
+.voice-hero-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+    color: var(--text-white);
+}
+
+.voice-hero-content p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+@keyframes pulse-slow {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 82, 82, 0.5);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(255, 82, 82, 0.7);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 82, 82, 0.5);
+    }
+}
+
+/* ── Toast Notifications ────────────────────────────────────────────────────── */
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: rgba(15, 17, 26, 0.95);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    border-left: 4px solid var(--primary);
+    box-shadow: var(--shadow-premium);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toast.fade-out {
+    animation: fadeOut 0.4s forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
 .error-message {
     margin-top: 16px;
     color: var(--primary);
@@ -416,6 +526,16 @@ h3,
 
 /* ── Voice Feature Styles ───────────────────────────────────────────────────── */
 
+.voice-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 20px;
+}
+
 .voice-btn {
     width: 44px;
     height: 44px;
@@ -427,7 +547,19 @@ h3,
     cursor: pointer;
     position: relative;
     transition: var(--transition);
-    margin: 0 20px;
+    flex-shrink: 0;
+}
+
+.live-transcript {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+    min-height: 1.2rem;
+    font-weight: 500;
 }
 
 .voice-btn:hover {

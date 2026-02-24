@@ -40,18 +40,20 @@ def rerank(
 
         candidates = restaurants[:MAX_RESTAURANTS_FOR_LLM]
         numbered = "\n".join(
-            f"{i+1}. {r.name} | {r.cuisine} | {r.price_tier} | rating {r.rating} | {r.location}"
+            f"{i+1}. {r.name} | {r.cuisine} | rating {r.rating} | {r.location}"
             for i, r in enumerate(candidates)
         )
         prompt = (
             f"You are a restaurant recommendation assistant. "
             f"The user wants: location='{preferences.get('location', 'any')}', "
-            f"cuisine='{preferences.get('cuisine', 'any')}', "
-            f"price='{preferences.get('price_tier', 'any')}', "
+            f"cuisine='{preferences.get('cuisines', 'any')}', "
             f"min_rating={preferences.get('min_rating', 0)}.\n\n"
             f"Here are the candidate restaurants (numbered):\n{numbered}\n\n"
-            f"Return ONLY a JSON array of the numbers in your recommended order, "
-            f"most relevant first. Example: [3,1,5,2,4]. No explanation."
+            f"1. Return a JSON object with two keys:\n"
+            f"   - 'order': array of the numbers in your recommended order, most relevant first.\n"
+            f"   - 'min_prices': an object mapping restaurant number to its estimated 'minimum bill for two people' in INR (e.g., {'1': 800, '2': 1200}). Base this on your knowledge of these restaurants or their reviews if provided.\n"
+            f"Example: {{\"order\": [3,1,5], \"min_prices\": {{\"1\": 800, \"2\": 1200, \"3\": 500, \"4\": 1500, \"5\": 900}}}}\n"
+            f"Return ONLY the JSON object. No explanation."
         )
 
         completion = client.chat.completions.create(
@@ -61,8 +63,10 @@ def rerank(
             temperature=0.3,
         )
         raw = (completion.choices[0].message.content or "").strip()
-        # Parse the number array
-        order: list[int] = json.loads(raw)
+        # Parse the JSON response
+        data = json.loads(raw)
+        order: list[int] = data.get("order", [])
+        min_prices: dict[str, int] = data.get("min_prices", {})
 
         reranked: list[Restaurant] = []
         seen = set()
@@ -73,6 +77,12 @@ def rerank(
         for idx in order:
             if 1 <= idx <= len(candidates) and idx not in seen:
                 restaurant = candidates[idx - 1]
+                # Set the estimated min price if available
+                if str(idx) in min_prices:
+                    restaurant.min_price_for_two = min_prices[str(idx)]
+                else:
+                    restaurant.min_price_for_two = restaurant.cost_for_two
+
                 # Generate summary if reviews exist and not already summarized
                 if restaurant.reviews and not restaurant.review_summary:
                     try:
