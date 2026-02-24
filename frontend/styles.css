@@ -415,28 +415,32 @@ input[type="range"] {
 }
 
 .restaurant-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-glass);
+    background: #FFFFFF;
+    border: 2px solid var(--border-glass);
     border-radius: var(--radius-md);
-    padding: 20px;
+    padding: 24px;
     transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .restaurant-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-8px);
     border-color: var(--primary);
+    box-shadow: 0 12px 24px rgba(226, 55, 68, 0.2);
 }
 
 .resto-name {
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 4px;
+    color: #1A1A1A;
 }
 
 .resto-meta {
     font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-bottom: 16px;
+    color: #666666;
+    margin-bottom: 20px;
+    font-weight: 500;
 }
 
 .resto-tags {
@@ -479,28 +483,29 @@ input[type="range"] {
 }
 
 .ai-summary {
-    margin: 16px 0;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 2px solid var(--primary);
+    margin: 20px 0;
+    padding: 14px;
+    background: rgba(226, 55, 68, 0.05);
+    border-left: 4px solid var(--primary);
     border-radius: 4px;
 }
 
 .ai-badge {
     text-transform: uppercase;
-    font-size: 0.65rem;
-    font-weight: 700;
+    font-size: 0.7rem;
+    font-weight: 800;
     color: var(--primary);
     display: block;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
 }
 
 .ai-summary p {
-    font-size: 0.875rem;
-    line-height: 1.4;
-    color: var(--text-white);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333333;
     font-style: italic;
+    font-weight: 400;
 }
 
 .placeholder-state {
