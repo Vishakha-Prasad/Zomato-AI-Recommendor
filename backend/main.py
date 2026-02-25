@@ -41,15 +41,14 @@ app.include_router(restaurants_router.router)
 def health():
     return {"status": "ok"}
 
-# Serve frontend static files
-# Note: frontend directory must exist
+# Serve frontend static files (local dev only; Vercel serves from public/)
 frontend_path = os.path.join(os.getcwd(), "frontend")
-if not os.path.exists(frontend_path):
-    os.makedirs(frontend_path)
+if not os.getenv("VERCEL") and os.path.exists(frontend_path):
+    assets_path = os.path.join(frontend_path, "assets")
+    if os.path.exists(assets_path):
+        app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+    app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
-app.mount("/assets", StaticFiles(directory=os.path.join(frontend_path, "assets")), name="assets")
-app.mount("/static", StaticFiles(directory=frontend_path), name="static")
-
-@app.get("/")
-def read_index():
-    return FileResponse(os.path.join(frontend_path, "index.html"))
+    @app.get("/")
+    def read_index():
+        return FileResponse(os.path.join(frontend_path, "index.html"))

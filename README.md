@@ -22,3 +22,15 @@ streamlit run app.py
 5. Ensure `data/zomato_cleaned.csv` exists in the repo (or update `.gitignore` to include it for deployment).
 
 Then click **Deploy**.
+
+## Deploy to Vercel
+
+1. Push this repo to GitHub.
+2. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
+3. **New Project** → Import `Vishakha-Prasad/Zomato-AI-Recommendor`.
+4. Framework preset: **Other** (or auto-detected FastAPI).
+5. Root directory: `.` — Main file: `index.py`.
+6. Environment variables: add `GROQ_API_KEY` and optionally `JWT_SECRET`.
+7. Click **Deploy**.
+
+Demo login: `demo@example.com` / `password123`

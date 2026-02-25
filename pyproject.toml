@@ -1,0 +1,9 @@
+[project]
+name = "zomato-ai-recommendor"
+version = "1.0.0"
+description = "AI-powered restaurant recommendations"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+app = "index:app"
