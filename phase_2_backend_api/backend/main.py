@@ -51,12 +51,15 @@ def health():
     return {"status": "ok"}
 
 # Serve frontend static files (local dev only; Vercel serves from public/)
-frontend_path = os.path.join(os.getcwd(), "frontend")
+frontend_path = os.path.join(os.path.dirname(__file__), "..", "..", "phase_3_frontend_app", "public")
 if not os.getenv("VERCEL") and os.path.exists(frontend_path):
     assets_path = os.path.join(frontend_path, "assets")
     if os.path.exists(assets_path):
         app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
-    app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+    
+    static_path = os.path.join(frontend_path, "static")
+    if os.path.exists(static_path):
+        app.mount("/static", StaticFiles(directory=static_path), name="static")
 
     @app.get("/")
     def read_index():

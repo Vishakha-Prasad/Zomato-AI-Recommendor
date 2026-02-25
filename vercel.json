@@ -15,6 +15,10 @@
       "dest": "/phase_3_frontend_app/public/static/$1"
     },
     {
+      "src": "/",
+      "dest": "/phase_3_frontend_app/public/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "phase_3_frontend_app/index.py"
     }
