@@ -1,1 +1,22 @@
-{}
+{
+  "builds": [
+    {
+      "src": "phase_3_frontend_app/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "phase_3_frontend_app/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(?:static|assets)/(.*)",
+      "dest": "/phase_3_frontend_app/public/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "phase_3_frontend_app/index.py"
+    }
+  ]
+}
