@@ -13,7 +13,8 @@ import pandas as pd
 def _resolve_data_path() -> Path:
     """Resolve path to zomato_cleaned.csv - works on local dev and Vercel serverless."""
     candidates = [
-        Path(__file__).resolve().parent.parent / "data" / "zomato_cleaned.csv",
+        Path(__file__).resolve().parent.parent.parent / "phase_1_data_pipeline" / "data" / "zomato_cleaned.csv",
+        Path.cwd() / "phase_1_data_pipeline" / "data" / "zomato_cleaned.csv",
         Path.cwd() / ".." / "phase_1_data_pipeline" / "data" / "zomato_cleaned.csv",
     ]
     for p in candidates:

@@ -22,5 +22,10 @@
       "src": "/(.*)",
       "dest": "phase_3_frontend_app/index.py"
     }
-  ]
+  ],
+  "functions": {
+    "phase_3_frontend_app/index.py": {
+      "includeFiles": "phase_1_data_pipeline/data/**"
+    }
+  }
 }
