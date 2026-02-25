@@ -11,9 +11,10 @@ venv/
 *.egg-info/
 .eggs/
 
-# Data and outputs
-data/*.csv
+# Data and outputs (exclude zomato_cleaned.csv for Streamlit deployment)
 data/*.parquet
+data/*.csv
+!data/zomato_cleaned.csv
 
 # IDE and OS
 .idea/
