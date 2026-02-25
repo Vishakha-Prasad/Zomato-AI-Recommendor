@@ -11,7 +11,7 @@ import traceback
 from pathlib import Path
 
 # Ensure project root is in sys.path (Vercel may run from different cwd)
-_root = Path(__file__).resolve().parent
+_root = Path(__file__).resolve().parent.parent
 if str(_root) not in sys.path:
     sys.path.insert(0, str(_root))
 
