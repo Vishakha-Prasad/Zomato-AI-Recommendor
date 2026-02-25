@@ -9,9 +9,9 @@ if project_root not in sys.path:
     sys.path.append(project_root)
 
 # Import backend modules directly
-from backend.catalog import filter_restaurants, get_locations, get_cuisines
-from backend import groq_ranker
-from backend.models import PreferencePayload, Restaurant
+from phase_2_backend_api.backend.catalog import filter_restaurants, get_locations, get_cuisines
+from phase_2_backend_api.backend import groq_ranker
+from phase_2_backend_api.backend.models import PreferencePayload, Restaurant
 
 # ----------------------------------------------------------------------------
 # 1. Page Configuration & Styling

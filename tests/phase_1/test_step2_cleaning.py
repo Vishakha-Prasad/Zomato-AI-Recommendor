@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 
 # Add data_pipeline to path so we can import clean_data
-SCRIPTS = Path(__file__).resolve().parent.parent / "data_pipeline"
+SCRIPTS = Path(__file__).resolve().parent.parent.parent / "phase_1_data_pipeline" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 from clean_data import (

@@ -20,7 +20,7 @@ if _env_file.exists():
     except ImportError:
         pass
 
-SCRIPTS = PROJECT_ROOT / "scripts"
+SCRIPTS = PROJECT_ROOT / "phase_1_data_pipeline" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 # Check for Kaggle credentials (env or ~/.kaggle/kaggle.json)

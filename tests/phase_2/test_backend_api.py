@@ -6,7 +6,7 @@ Uses pytest + httpx TestClient. Requires data/zomato_cleaned.csv for restaurant 
 import pytest
 from fastapi.testclient import TestClient
 
-from backend.main import app
+from phase_2_backend_api.backend.main import app
 
 client = TestClient(app)
 

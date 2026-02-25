@@ -5,10 +5,10 @@ Restaurants router: GET /restaurants/locations, /restaurants/cuisines, POST /rec
 from __future__ import annotations
 from fastapi import APIRouter, Depends
 
-from backend.catalog import filter_restaurants, get_locations, get_cuisines
-from backend.models import PreferencePayload, Restaurant
-from backend.routers.auth import get_current_user
-from backend import groq_ranker
+from phase_2_backend_api.backend.catalog import filter_restaurants, get_locations, get_cuisines
+from phase_2_backend_api.backend.models import PreferencePayload, Restaurant
+from phase_2_backend_api.backend.routers.auth import get_current_user
+from phase_2_backend_api.backend import groq_ranker
 
 router = APIRouter(tags=["restaurants"])
 

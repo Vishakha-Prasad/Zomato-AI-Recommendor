@@ -22,7 +22,7 @@ except OSError:
     pass
 
 try:
-    from backend.main import app
+    from phase_2_backend_api.backend.main import app
 except Exception as e:
     # Surface import/runtime errors for debugging (Vercel 500 crash)
     from fastapi import FastAPI

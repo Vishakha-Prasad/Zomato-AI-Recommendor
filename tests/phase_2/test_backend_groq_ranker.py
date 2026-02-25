@@ -5,8 +5,8 @@ Uses pytest.
 
 import pytest
 
-from backend.models import Restaurant
-from backend import groq_ranker
+from phase_2_backend_api.backend.models import Restaurant
+from phase_2_backend_api.backend import groq_ranker
 
 
 # ── Fallback behavior (no valid API key) ───────────────────────────────────────

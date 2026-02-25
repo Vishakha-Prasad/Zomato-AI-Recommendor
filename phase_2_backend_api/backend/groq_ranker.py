@@ -8,7 +8,7 @@ import json
 import os
 from typing import Any
 
-from backend.models import Restaurant
+from phase_2_backend_api.backend.models import Restaurant
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 MODEL = "llama-3.3-70b-versatile"

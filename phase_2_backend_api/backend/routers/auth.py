@@ -6,13 +6,13 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from backend.auth import (
+from phase_2_backend_api.backend.auth import (
     authenticate_user,
     register_user,
     create_access_token,
     decode_token,
 )
-from backend.models import UserIn, UserOut, Token
+from phase_2_backend_api.backend.models import UserIn, UserOut, Token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

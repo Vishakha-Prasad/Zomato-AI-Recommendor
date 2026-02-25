@@ -4,7 +4,7 @@ Uses pytest (see requirements.txt).
 """
 
 import pytest
-from backend.auth import (
+from phase_2_backend_api.backend.auth import (
     authenticate_user,
     register_user,
     create_access_token,

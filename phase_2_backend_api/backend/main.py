@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from backend.routers import auth as auth_router
-from backend.routers import restaurants as restaurants_router
+from phase_2_backend_api.backend.routers import auth as auth_router
+from phase_2_backend_api.backend.routers import restaurants as restaurants_router
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
