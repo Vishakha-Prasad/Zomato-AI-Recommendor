@@ -58,7 +58,7 @@ def clean_zomato_df(
     """
     mapping = {k: v for k, v in column_mapping.items() if v is not None and v in df.columns}
     if not mapping:
-        return pd.DataFrame(columns=[OUT_NAME, OUT_LOCATION, OUT_CUISINE, OUT_PRICE_TIER, OUT_RATING])
+        return pd.DataFrame(columns=[OUT_NAME, OUT_LOCATION, OUT_CUISINE, OUT_COST_FOR_TWO, OUT_RATING, OUT_REVIEWS])
 
     out = pd.DataFrame()
 

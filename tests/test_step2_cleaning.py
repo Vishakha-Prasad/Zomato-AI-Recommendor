@@ -15,12 +15,12 @@ sys.path.insert(0, str(SCRIPTS))
 from clean_data import (
     MAX_RATING,
     MIN_RATING,
+    OUT_COST_FOR_TWO,
     OUT_CUISINE,
     OUT_LOCATION,
     OUT_NAME,
-    OUT_PRICE_TIER,
     OUT_RATING,
-    VALID_PRICE_TIERS,
+    OUT_REVIEWS,
     clean_zomato_df,
 )
 
@@ -50,9 +50,9 @@ def raw_df():
 
 
 def test_clean_zomato_df_has_required_columns(raw_df, column_mapping):
-    """Cleaned DataFrame must have name, location, cuisine, price_tier, rating."""
+    """Cleaned DataFrame must have name, location, cuisine, cost_for_two, rating, reviews."""
     out = clean_zomato_df(raw_df, column_mapping)
-    for col in (OUT_NAME, OUT_LOCATION, OUT_CUISINE, OUT_PRICE_TIER, OUT_RATING):
+    for col in (OUT_NAME, OUT_LOCATION, OUT_CUISINE, OUT_COST_FOR_TWO, OUT_RATING, OUT_REVIEWS):
         assert col in out.columns, f"Missing column {col}"
 
 
@@ -63,10 +63,11 @@ def test_clean_zomato_df_no_duplicates(raw_df, column_mapping):
     assert not dupes.any(), "Duplicates should be removed"
 
 
-def test_clean_zomato_df_price_tiers_valid(raw_df, column_mapping):
-    """All price_tier values must be in ₹, ₹₹, ₹₹₹."""
+def test_clean_zomato_df_cost_for_two_valid(raw_df, column_mapping):
+    """cost_for_two must be numeric and non-negative."""
     out = clean_zomato_df(raw_df, column_mapping)
-    assert out[OUT_PRICE_TIER].isin(VALID_PRICE_TIERS).all(), "Invalid price_tier values"
+    assert (out[OUT_COST_FOR_TWO] >= 0).all(), "cost_for_two should be non-negative"
+    assert out[OUT_COST_FOR_TWO].dtype in ("int64", "float64", "int32"), "cost_for_two should be numeric"
 
 
 def test_clean_zomato_df_rating_in_range(raw_df, column_mapping):
@@ -95,17 +96,16 @@ def test_clean_zomato_df_cuisine_first_only(raw_df, column_mapping):
     assert row_a[OUT_CUISINE] == "north indian"
 
 
-def test_clean_zomato_df_cost_mapped_to_tier(raw_df, column_mapping):
-    """Numeric cost should map to ₹ (<400), ₹₹ (400-800), ₹₹₹ (800+)."""
+def test_clean_zomato_df_cost_mapped(raw_df, column_mapping):
+    """Numeric cost from Price column should be preserved in cost_for_two."""
     out = clean_zomato_df(raw_df, column_mapping)
-    # Resto A 300 -> ₹, Resto B 600 -> ₹₹, Resto C 1200 -> ₹₹₹
-    def get_tier(name):
+    def get_cost(name):
         rows = out[out[OUT_NAME] == name]
-        return rows[OUT_PRICE_TIER].iloc[0] if not rows.empty else None
+        return rows[OUT_COST_FOR_TWO].iloc[0] if not rows.empty else None
 
-    assert get_tier("Resto A") == "₹"
-    assert get_tier("Resto B") == "₹₹"
-    assert get_tier("Resto C") == "₹₹₹"
+    assert get_cost("Resto A") == 300
+    assert get_cost("Resto B") == 600
+    assert get_cost("Resto C") == 1200
 
 
 def test_clean_zomato_df_drops_null_rating_rows(raw_df, column_mapping):
@@ -119,7 +119,7 @@ def test_clean_zomato_df_empty_mapping():
     df = pd.DataFrame({"x": [1, 2], "y": [3, 4]})
     out = clean_zomato_df(df, {"Location": None, "Cuisine": None, "Price": None, "Ratings": None})
     assert out.shape[0] == 0
-    for col in (OUT_NAME, OUT_LOCATION, OUT_CUISINE, OUT_PRICE_TIER, OUT_RATING):
+    for col in (OUT_NAME, OUT_LOCATION, OUT_CUISINE, OUT_COST_FOR_TWO, OUT_RATING, OUT_REVIEWS):
         assert col in out.columns
 
 
