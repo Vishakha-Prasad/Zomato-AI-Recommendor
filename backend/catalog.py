@@ -31,17 +31,16 @@ def _load() -> pd.DataFrame:
     if _df is None:
         _path = _resolve_data_path()
         if not _path.exists():
-            raise FileNotFoundError(
-                f"Cleaned data not found at {_path}. "
-                "Run: python data_pipeline/explore_and_clean_data.py"
-            )
-        # Explicit UTF-8 for Windows compatibility with "₹"
-        _df = pd.read_csv(_path, encoding="utf-8")
-        # Normalise strings
-        for col in ("location", "cuisine", "name", "reviews"):
-            _df[col] = _df[col].fillna("").astype(str).str.strip()
-        _df["rating"] = pd.to_numeric(_df["rating"], errors="coerce").fillna(0.0)
-        _df["cost_for_two"] = pd.to_numeric(_df["cost_for_two"], errors="coerce").fillna(500).astype(int)
+            # Return empty DataFrame instead of raising (Vercel: file may be excluded)
+            _df = pd.DataFrame(columns=["name", "location", "cuisine", "cost_for_two", "rating", "reviews"])
+        else:
+            # Explicit UTF-8 for Windows compatibility with "₹"
+            _df = pd.read_csv(_path, encoding="utf-8")
+            # Normalise strings
+            for col in ("location", "cuisine", "name", "reviews"):
+                _df[col] = _df[col].fillna("").astype(str).str.strip()
+            _df["rating"] = pd.to_numeric(_df["rating"], errors="coerce").fillna(0.0)
+            _df["cost_for_two"] = pd.to_numeric(_df["cost_for_two"], errors="coerce").fillna(500).astype(int)
     return _df
 
 
