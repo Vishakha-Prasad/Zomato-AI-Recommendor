@@ -488,6 +488,14 @@ h3,
 
 .filter-group select {
     cursor: pointer;
+    -webkit-appearance: menulist;
+    appearance: menulist;
+}
+
+.filter-group select option {
+    background: #1a1d29;
+    color: #ffffff;
+    padding: 8px;
 }
 
 .filter-group input[type="number"]:focus {

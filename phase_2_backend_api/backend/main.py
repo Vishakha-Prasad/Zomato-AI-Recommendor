@@ -50,6 +50,57 @@ async def file_not_found_handler(_request: Request, exc: FileNotFoundError):
 def health():
     return {"status": "ok"}
 
+
+@app.get("/debug/paths")
+def debug_paths():
+    """Temporary: inspect filesystem paths on Vercel for debugging."""
+    import glob
+    from pathlib import Path as P
+
+    main_file = P(__file__).resolve()
+    project_root = main_file.parent.parent.parent
+    cwd = P.cwd()
+
+    # Check all candidate paths
+    candidates = {
+        "__file__": str(main_file),
+        "project_root": str(project_root),
+        "cwd": str(cwd),
+        "vercel_env": os.getenv("VERCEL", "not set"),
+    }
+
+    # Search for CSV files
+    search_paths = [
+        str(project_root / "phase_1_data_pipeline" / "data"),
+        str(cwd / "phase_1_data_pipeline" / "data"),
+        str(cwd),
+        "/var/task",
+    ]
+
+    found_files = {}
+    for sp in search_paths:
+        try:
+            if os.path.exists(sp):
+                found_files[sp] = os.listdir(sp)[:20]
+            else:
+                found_files[sp] = "DOES NOT EXIST"
+        except Exception as e:
+            found_files[sp] = f"ERROR: {e}"
+
+    # Also try to find any CSV files anywhere
+    csv_glob = []
+    for pattern in ["/var/task/**/*.csv", str(project_root / "**" / "*.csv")]:
+        try:
+            csv_glob.extend(glob.glob(pattern, recursive=True)[:10])
+        except Exception:
+            pass
+
+    return {
+        "paths": candidates,
+        "dir_contents": found_files,
+        "csv_files_found": csv_glob[:20],
+    }
+
 # Serve frontend static files (local dev only; Vercel serves from public/)
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "..", "phase_3_frontend_app", "public")
 if not os.getenv("VERCEL") and os.path.exists(frontend_path):
