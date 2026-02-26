@@ -23,6 +23,43 @@ except OSError:
 
 try:
     from phase_2_backend_api.backend.main import app
+
+    # Temporary debug endpoint to inspect Vercel filesystem
+    @app.get("/debug/paths")
+    def debug_paths():
+        import glob
+        main_file = Path(__file__).resolve()
+        project_root = main_file.parent.parent
+        cwd = Path.cwd()
+        candidates = {
+            "index_py__file__": str(main_file),
+            "project_root": str(project_root),
+            "cwd": str(cwd),
+            "vercel_env": os.getenv("VERCEL", "not set"),
+        }
+        search_paths = [
+            str(project_root / "phase_1_data_pipeline" / "data"),
+            str(cwd / "phase_1_data_pipeline" / "data"),
+            str(cwd),
+            "/var/task",
+        ]
+        found = {}
+        for sp in search_paths:
+            try:
+                if os.path.exists(sp):
+                    found[sp] = os.listdir(sp)[:20]
+                else:
+                    found[sp] = "NOT_FOUND"
+            except Exception as ex:
+                found[sp] = str(ex)
+        csv_files = []
+        for p in ["/var/task/**/*.csv", str(project_root / "**" / "*.csv")]:
+            try:
+                csv_files.extend(glob.glob(p, recursive=True)[:10])
+            except Exception:
+                pass
+        return {"paths": candidates, "dirs": found, "csvs": csv_files[:20]}
+
 except Exception as e:
     # Surface import/runtime errors for debugging (Vercel 500 crash)
     from fastapi import FastAPI
