@@ -25,7 +25,7 @@
   ],
   "functions": {
     "phase_3_frontend_app/index.py": {
-      "includeFiles": "phase_1_data_pipeline/data/**"
+      "includeFiles": "{phase_1_data_pipeline/data/zomato_cleaned.csv,phase_2_backend_api/**}"
     }
   }
 }

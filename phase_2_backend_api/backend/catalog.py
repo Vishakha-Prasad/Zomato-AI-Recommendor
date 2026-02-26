@@ -12,14 +12,34 @@ import pandas as pd
 
 def _resolve_data_path() -> Path:
     """Resolve path to zomato_cleaned.csv - works on local dev and Vercel serverless."""
+    _data_file = "zomato_cleaned.csv"
+    _data_subdir = Path("phase_1_data_pipeline") / "data" / _data_file
+
     candidates = [
-        Path(__file__).resolve().parent.parent.parent / "phase_1_data_pipeline" / "data" / "zomato_cleaned.csv",
-        Path.cwd() / "phase_1_data_pipeline" / "data" / "zomato_cleaned.csv",
-        Path.cwd() / ".." / "phase_1_data_pipeline" / "data" / "zomato_cleaned.csv",
+        # 1. Relative to this source file (local dev)
+        Path(__file__).resolve().parent.parent.parent / _data_subdir,
+        # 2. Relative to cwd (set by index.py on Vercel)
+        Path.cwd() / _data_subdir,
+        # 3. Vercel /var/task root
+        Path("/var/task") / _data_subdir,
+        # 4. Relative to the Vercel function entry point
+        Path("/var/task/phase_3_frontend_app") / _data_subdir,
+        # 5. One level up from cwd
+        Path.cwd() / ".." / _data_subdir,
     ]
+
     for p in candidates:
-        if p.resolve().exists():
-            return p.resolve()
+        resolved = p.resolve()
+        if resolved.exists():
+            return resolved
+
+    # Fallback: search common Vercel paths for any CSV
+    import glob
+    for pattern in ["/var/task/**/*.csv", str(Path.cwd() / "**" / _data_file)]:
+        found = glob.glob(pattern, recursive=True)
+        if found:
+            return Path(found[0])
+
     return candidates[0]  # Return primary path for clearer error messages
 
 
